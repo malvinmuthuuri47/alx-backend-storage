@@ -2,6 +2,10 @@
 """A module that displays Nginx logs stored in MongoDB"""
 
 import pymongo
+
+# start MongoDb
+sudo service mongod start
+
 # MongoDB connection settings
 db_name = "logs"
 collection_name = "nginx"
