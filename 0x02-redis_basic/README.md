@@ -3,7 +3,7 @@
 <h4>Learning Objectives</h4>
 <ul>
 <li>Learn how to use redis for basic operations</li>
-<li>Leran how to use redis as a simple cache</li>
+<li>Learn how to use redis as a simple cache</li>
 </ul>
 
 <h4>Requirements</h4>
