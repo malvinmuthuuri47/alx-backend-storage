@@ -19,6 +19,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
             Create a random string using uuid, set it into the
@@ -54,3 +55,20 @@ class Cache:
             int
         """
         return self.get(key, fn=int)
+
+    def count_calls(method: Callable) -> Callable:
+        """A method that takes a Callable and returns a Callable"""
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
+            """
+                This method implements the functionality of storing the
+                number of times the store method has been called.
+
+                It ensures the key is a qualified name by using the
+                __qualname__ dunder method and increases the value of
+                the key by using the incr() method
+            """
+            key = method.__qualname__
+            self._redis.incr(key)
+            return method(self, *args, **kwargs)
+        return wrapper
