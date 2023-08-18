@@ -3,6 +3,25 @@
 import redis
 import uuid
 from typing import Union, Callable
+from functools import wraps
+
+
+def count_calls(method: Callable) -> Callable:
+    """A method that takes a Callable and returns a Callable"""
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+            This method implements the functionality of storing the
+            number of times the store method has been called.
+
+            It ensures the key is a qualified name by using the
+            __qualname__ dunder method and increases the value of
+            the key by using the incr() method
+        """
+        key = method.__qualname__
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
