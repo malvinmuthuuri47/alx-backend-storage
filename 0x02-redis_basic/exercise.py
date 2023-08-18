@@ -24,6 +24,29 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """This method takes a Callable argument and returns a callable"""
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """This wrapper function sets the input and output keys and
+        pushes them into a list"""
+        input_key = method.__qualname__ + ":inputs"
+        output_key = method.__qualname__ + ":outputs"
+
+        # Store input args as a normalized string
+        self._redis.rpush(input_key, str(args))
+
+        # Execute the wrapped func to get output
+        output = method(self, *args, **kwargs)
+
+        # Store the output in the output list
+        self._redis.rpush(output_key, output)
+
+        return output
+
+    return wrapper
+
+
 class Cache:
     """
         Wrapper class containing the init and store methods
@@ -39,6 +62,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
             Create a random string using uuid, set it into the
