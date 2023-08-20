@@ -64,7 +64,7 @@ def replay(method: Callable):
         output_str = output_val.decode('utf-8')
 
         # Unpacking the arguments
-        print(f"{func_name}{eval(input_str)} -> {output_str}")
+        print(f"{func_name}(*{eval(input_str)}) -> {output_str}")
 
 
 class Cache:
